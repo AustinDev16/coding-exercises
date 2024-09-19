@@ -41,7 +41,43 @@ enum StringOrDouble: Decodable {
     var label: String {
         return switch self {
         case .string(let value): value
-        case .double(let value): String(format: "%.1f", value)
+        case .double(let value): String(format: "$%.1f million", value)
+        }
+    }
+}
+
+enum AttributeType: String {
+    case location_type
+    case name
+    case description
+    case estimated_revenue_millions
+    case empty
+}
+
+extension Attribute {
+    var attributeType: AttributeType {
+        return AttributeType(rawValue: self.type) ?? .empty
+    }
+}
+
+extension Location {
+    var name: String {
+        self.attributes.first { $0.attributeType == .name }?.value.label ?? ""
+    }
+
+    var description: String {
+        self.attributes.first { $0.attributeType == .description }?.value.label ?? ""
+    }
+
+    var estimatedRevenue: String {
+        self.attributes.first { $0.attributeType == .estimated_revenue_millions }?.value.label ?? ""
+    }
+
+    var locationType: LocationFilterType? {
+        if let attribute = self.attributes.first(where: { $0.attributeType == .location_type }) {
+            return LocationFilterType(rawValue: attribute.value.label.lowercased())
+        } else {
+            return nil
         }
     }
 }
