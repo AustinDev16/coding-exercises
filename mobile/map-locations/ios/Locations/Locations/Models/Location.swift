@@ -14,7 +14,7 @@ struct Location: Decodable {
 
 struct Attribute: Decodable {
     let type: String
-    let value: ValueType
+    let value: StringOrDouble
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -34,7 +34,7 @@ struct Attribute: Decodable {
     }
 }
 
-enum ValueType: Decodable {
+enum StringOrDouble: Decodable {
     case string(String)
     case double(Double)
 
