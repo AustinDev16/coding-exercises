@@ -17,7 +17,7 @@ struct MapView: View {
     @State var showSelectedLocation = false
 
     var body: some View {
-        Map(position: $cameraPosition) {
+        Map(position: $cameraPosition, interactionModes: [.all]) {
             ForEach(viewModel.visibleLocations, id: \.id) { location in
                 Annotation(location.name, coordinate: location.coordinate) {
                     VStack {
@@ -28,15 +28,20 @@ struct MapView: View {
                             }
                         }
                     }
-                    .font(.caption)
+                    .font(.title)
                     .onTapGesture {
                         print("tap: \(location.name)")
                     }
                 }
-                .annotationTitles(.automatic)
-
+                .annotationTitles(.visible)
             }
         }
+        .mapStyle(.standard(elevation: .flat,
+                            emphasis: .muted,
+                            pointsOfInterest: .excludingAll,
+                            showsTraffic: false
+                           )
+        )
         .overlay(alignment: .bottomTrailing) {
             Button(action: { selectFiltersShowing = true }) {
                 Image(systemName: "line.3.horizontal.decrease.circle.fill")
@@ -51,7 +56,7 @@ struct MapView: View {
         .navigationTitle("Map")
 //        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $selectFiltersShowing) {
-            SelectFilterView()
+            SelectFilterView(selectedFilters: viewModel.selectedFilters, viewModel: viewModel)
                 .presentationDetents([.medium, .large])
         }
         .task {
@@ -62,16 +67,19 @@ struct MapView: View {
 
 @Observable
 class MapViewModel {
-    var visibleLocations: [Location] = []
     @ObservationIgnored private var allLocations: [Location] = []
+    var visibleLocations: [Location] = []
     var loading = true
     var showError = false
+    var selectedFilters: [LocationFilterType] = []
 
 
     func getLocations(_ networking: LocationsService) async {
+        guard allLocations.isEmpty else { return }
         do {
             let locations = try await networking.getLocations()
-            visibleLocations = locations
+            allLocations = locations
+            applyFilters([.museum, .park])
         } catch {
            print("An error occurred: \(error)")
             showError = true
@@ -80,7 +88,9 @@ class MapViewModel {
     }
 
     func applyFilters(_ filters: [LocationFilterType]) {
-
+        print("VM FILTERS: \(filters)")
+        selectedFilters = filters
+        visibleLocations = allLocations.filter { selectedFilters.contains($0.locationType!) }
     }
 }
 
@@ -92,6 +102,13 @@ class MapViewModel {
 
 struct SelectFilterView: View {
     @State var selectedFilters: Set<LocationFilterType> = []
+    let viewModel: MapViewModel
+
+    init(selectedFilters: [LocationFilterType], viewModel: MapViewModel) {
+        self.selectedFilters = Set<LocationFilterType>(selectedFilters)
+        self.viewModel = viewModel
+    }
+
     var body: some View {
         List {
             Section {
@@ -118,8 +135,8 @@ struct SelectFilterView: View {
                 Button("Apply All", action: { applyAll() } )
             } footer: { Text("Apply all Filters") }
         }
-        .onChange(of: selectedFilters) { _, newValue in
-            print(newValue)
+        .onChange(of: selectedFilters) { _, filters in
+            viewModel.applyFilters(Array(filters))
         }
     }
 
@@ -133,5 +150,5 @@ struct SelectFilterView: View {
 }
 
 #Preview {
-    SelectFilterView()
+    SelectFilterView(selectedFilters: [.landmark], viewModel: MapViewModel())
 }
