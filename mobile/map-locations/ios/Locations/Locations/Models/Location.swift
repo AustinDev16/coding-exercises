@@ -5,6 +5,9 @@
 //  Created by Austin Blaser on 9/18/24.
 //
 
+import Foundation
+import MapKit
+
 struct Location: Decodable {
     let id: Int
     let latitude: Double
@@ -79,5 +82,19 @@ extension Location {
         } else {
             return nil
         }
+    }
+
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}
+
+extension Location: Hashable, Equatable {
+    static func ==(lhs: Location, rhs: Location) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
