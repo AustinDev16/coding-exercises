@@ -1,16 +1,14 @@
 //
-//  LocationsTests.swift
-//  LocationsTests
+//  MockLocationsService.swift
+//  Locations
 //
-//  Created by Austin Blaser on 9/18/24.
+//  Created by Austin Blaser on 9/20/24.
 //
 
 import Foundation
-import Testing
-@testable import Locations
 
-struct LocationsTests {
-    @Test func testDecode() async throws {
+class MockLocationsService: LocationsService {
+    func getLocations() async throws -> [Location] {
         let jsonString = """
 {
         "id": 1,
@@ -37,8 +35,6 @@ struct LocationsTests {
     }
 """
         let location = try JSONDecoder().decode(Location.self, from: jsonString.data(using: .utf8)!)
-        #expect(location.attributes.count == 4)
-        #expect(location.attributes.last!.value.label == "$10.5 million")
+        return [location]
     }
-
 }
