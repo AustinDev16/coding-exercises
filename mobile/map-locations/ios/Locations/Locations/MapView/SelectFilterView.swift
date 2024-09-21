@@ -35,14 +35,15 @@ struct SelectFilterView: View {
                     )
                         .tint(Color.blue)
                 }
-            } header: { Text("Location Type") }
+            } header: { Text("Filter by Location Type") }
 
             Section {
-                Button("Reset", action: { reset() } )
-                Button("Apply All", action: { applyAll() } )
+                Button("Clear", action: { reset() } )
+                Button("Show All", action: { applyAll() } )
             }
         }
         .onChange(of: selectedFilters) { _, filters in
+            // Updates view model and map view
             viewModel.applyFilters(Array(filters))
         }
     }

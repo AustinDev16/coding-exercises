@@ -80,7 +80,7 @@ Do not edit any lines above this line break.
 
 ## Getting Started
 
-Run the Locations app by first downloading Xcode (version 16 required). It is available on the Mac App Store here, or if you have a Apple Developer account, download it here. The first time Xcode runs, it will download the iOS 18 runtime for the simulator, which will take some time.
+Run the Locations app by first downloading Xcode (version 16 required). It is available on the Mac App Store [here](https://apps.apple.com/us/app/xcode/id497799835?mt=12), or if you have a Apple Developer account, download it [here](https://developer.apple.com/download/applications/). The first time Xcode runs, it will download the iOS 18 runtime for the simulator, which will take some time.
 
 With Xcode open and the runtime downloaded, run the application by selecting an iOS device from the dropdown list next to the Locations App target in the top application bar. I recommend an iPhone, but iPad will also work. Then press the play button or COMMAND + R to build and run the app in the iOS simulator. (Note: you can also build and run the app on a physical iOS device, but that requires you to sign in to your Apple Developer account and your device is running iOS 18). That's it! Have fun exploring the app. Dark mode is also supported.
 
@@ -94,6 +94,6 @@ The app is built completely with SwiftUI and the map is rendered using Apple's M
 
 The architecture of the app consists of a networking layer, models of the data objects, and the view/view model.
 
-The networking layer conforms to a protocol `LocationService`. Any data provider that conforms to that protocol can be used or swapped into the app. It provides flexibilty both in offering a easy to use mock data for quickly building the UI and in more complex apps, being able to swap out a new network layer without needing to update large portions of the app code, if at all. Today it's backed by Github file hosting, tomorrow it's a rest endpoint, the UI is none the wiser. Views in the app expect a networking interface which is injected at the top level (`LocationsApp.swift`)
+The networking layer conforms to a protocol `LocationService`. Any data provider that conforms to that protocol can be used or swapped into the app. It provides flexibilty both in offering an easy to use mock data for quickly building the UI and in more complex apps, being able to swap out a new network layer without needing to update large portions of the app code, if at all. Today it's backed by Github file hosting, tomorrow it's a rest endpoint: the UI is none the wiser. Views in the app expect a networking interface which is injected at the top level (`LocationsApp.swift`)
 
 SwiftUI is a declarative framework, so I store state related to the UI mostly on the SwiftUI view itself. I chose to also use a view model to better organize logic around filtering, but mark it as `@Observable`, which means any properties referenced by it in the SwiftUI view will update automatically when changed, just as any View property marked by `@State` would do.

@@ -14,7 +14,7 @@ struct LocationDetailView: View {
             List {
                 Section {
                     HStack {
-                        Image(systemName: location.locationType?.iconName ?? "arrow")
+                        Image(systemName: location.locationType?.iconName ?? "mappin.and.ellipse")
                         Text(location.locationType?.label ?? "")
                             .font(.body)
                     }
