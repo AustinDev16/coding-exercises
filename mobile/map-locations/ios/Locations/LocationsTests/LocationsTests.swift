@@ -40,5 +40,4 @@ struct LocationsTests {
         #expect(location.attributes.count == 4)
         #expect(location.attributes.last!.value.label == "$10.5 million")
     }
-
 }
